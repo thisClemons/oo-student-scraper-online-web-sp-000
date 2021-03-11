@@ -22,7 +22,7 @@ class Scraper
   end
 
   def self.scrape_profile_page(profile_url)
-    valid_keys = %w(twitter linkedin github blog)
+
     page = Nokogiri::HTML(open(profile_url))
 
     student = {}
@@ -32,14 +32,20 @@ class Scraper
     social.css('a').each do |network|
       link = network.attr('href')
 
-      valid_keys.each do |v_key|
-        if link.include?(v_key)
-          key = v_key
-          student[key.to_sym] = link
-        elsif !link[/.com\/.+/]
-          student[:blog] = link
-        end
+
+      if link.include?("twitter")
+        key = :twitter
+      elsif link.include?("linkedin")
+        key = :linkedin
+      elsif link.include?("github")
+        key = :github
+      else
+        key = :blog
       end
+
+      student[key] = link
+
+
 
       # Code for more general scraping - used with commented out code in student.rb
       # if link[/.com\/.+/] && !link.include?("blog")
